@@ -27,10 +27,10 @@ export const useOperativosStore = defineStore('operativos', {
 
             return this.operativos = await putFetchOperativoApi(id,operativo);
           },
-        async deleteOperativo(id,operativo) {
+        async deleteOperativo(id) {
 
             return this.operativos = await deleteFetchOperativoApi(id);
-        }
+        },
     },
 
 });

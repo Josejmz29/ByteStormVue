@@ -11,7 +11,7 @@
               <v-divider vertical></v-divider>
               <v-btn variant="text" @click="navigateTo('/misiones')">Mision</v-btn>
               <v-divider vertical></v-divider>
-              <v-btn variant="text" @click="navigateTo('/equipos')">MEquipo</v-btn>
+              <v-btn variant="text" @click="navigateTo('/equipos')">Equipo</v-btn>
             </v-toolbar-items>
             <v-divider vertical></v-divider>
             <v-app-bar-nav-icon class="ms-2"></v-app-bar-nav-icon>

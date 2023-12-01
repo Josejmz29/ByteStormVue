@@ -9,7 +9,7 @@
 
             <v-dialog v-model="dialogVisible" max-width="600">
                 <v-card>
-                    <v-card-title>Agregar Mision</v-card-title>
+                    <v-card-title class="mx-2">Agregar Mision</v-card-title>
                     <template v-slot:append>
                         <v-btn icon="$close" variant="text" @click="cerrarDialog"></v-btn>
                     </template>
@@ -17,16 +17,16 @@
                         <!-- Formulario aquí -->
                         <v-form @submit.prevent="guardarMision">
 
-                            <v-row class="mx-16 ">
+                            <v-row class=" ">
 
                                 <v-col cols="12" sm="6">
-                                    <v-text-field label="Código" prepend-icon=""></v-text-field>
-                                    <v-select :items="items" density="comfortable" label="Comfortable"></v-select>
+                                    <v-text-field label="Código" prepend-icon="" v-model="misionPost.codigo"></v-text-field>
+                                    <v-select :items="items" density="comfortable" label="Comfortable" v-model="misionPost.estado" ></v-select>
 
                                 </v-col>
 
                                 <v-col cols="12" sm="6">
-                                    <v-textarea label="Descripcion"></v-textarea>
+                                    <v-textarea label="Descripcion" v-model="misionPost.descripcion"></v-textarea>
                                 </v-col>
                             </v-row>
 
@@ -62,7 +62,7 @@
                                                 <v-card-title class="text-h7 my-7 mx-2 ">{{ mision.estado }}</v-card-title>
                                                 <v-spacer></v-spacer>
                                                 <v-btn icon="$close" variant="text"
-                                                    @click=" deleteMision(mision.id, mision)" class="my-5 mx-6"></v-btn>
+                                                    @click=" deleteMision(mision.codigo, mision)" class="my-5 mx-6"></v-btn>
                                             </v-row>
 
 
@@ -81,7 +81,9 @@
                                                         </tr>
                                                         <tr>
                                                             <td>Operativo</td>
-                                                            <td>{{ mision.operativoAsignadoId }}</td>
+                                                            <td>{{ 
+                                                            mision.operativoAsignado ? mision.operativoAsignado.nombre : ''
+                                                        }}</td>
                                                         </tr>
 
                                                         <tr>
@@ -138,7 +140,7 @@
 
                                                 <v-col class="text-end align-center">
                                                     <v-label class="mx-4 my-3 text-h6 ">Operativo:</v-label></v-col>
-                                                <v-col><v-text-field label="id" prepend-icon=""></v-text-field></v-col>
+                                                <v-col><v-text-field label="id" prepend-icon="" v-model="operativoId"></v-text-field></v-col>
 
                                                 <v-spacer></v-spacer>
 
@@ -147,7 +149,7 @@
                                             <v-row align="center" justify="center">
                                                 <v-btn class="me-2 text-none " color="#4f545c"
                                                     prepend-icon="mdi-arrow-up-bold-box-outline" variant="flat"
-                                                    @click="putMision(mision.id, mision)">
+                                                    @click="añadirOperativo(mision.codigo, operativoId)">
                                                     Añadir
                                                 </v-btn>
                                             </v-row>
@@ -181,16 +183,23 @@ export default {
                 codigo: "",
                 descripcion: "",
                 estado: "",
-                operativoAsignadoId: "",
-                operativo: {
+                operativoAsignadoID: null,
+                operativoAsignado: {
                     id: "",
                     nombre: "",
                     rol: "",
                 },
+                esquipos: [],  
+            },
+            misionPost : {
+                codigo: "",
+                descripcion: "",
+                estado: "",
             },
             items: ["planificada", "En curso", "Completada"],
             dialogVisible: false,
             misionesStore: null,
+            operativoId : "",
         };
     },
 
@@ -204,9 +213,10 @@ export default {
             this.misiones = await this.misionesStore.getMisiones();
         },
         async guardarMision() {
-            await this.misionesStore.postMision(this.mision);
-            this.mision.nombre = "";
-            this.mision.rol = "";
+            await this.misionesStore.postMision(this.misionPost);
+            this.misionPost.codigo = "";
+            this.misionPost.descripcion = "";
+            this.misionPost.estado = null;
             await this.getMisiones();
             this.dialogVisible = false; // Cierra el diálogo después de guardar
         },
@@ -216,8 +226,12 @@ export default {
         },
         async putMision(id, misionPut) {
             await this.misionesStore.putMision(id, misionPut);
-            this.mision.nombre = "";
-            this.mision.rol = "";
+            
+            await this.getMisiones();
+        },
+        async añadirOperativo(id, operativo) {
+            await this.misionesStore.añadirOperativo(id, operativo);
+            this.operativoId ="";
             await this.getMisiones();
         },
         abrirDialog() {

@@ -74,3 +74,6 @@ export const postFetchOperativoApi = async (operativo) => {
         throw error;
       }
     }
+
+
+      

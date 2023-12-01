@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const getFetchMisionesApi = async () => {
-  const apiUrl = "http://localhost:5020/api/Misions";
+export const getFetchEquiposApi = async () => {
+  const apiUrl = "http://localhost:5020/api/Equipos";
 
   try {
     const response = await axios.get(apiUrl, {
@@ -12,16 +12,16 @@ export const getFetchMisionesApi = async () => {
     console.log("Respuesta exitosa:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching misiones:", error);
+    console.error("Error fetching equipos:", error);
     throw error;
   }
 };
 
-export const postFetchMisionApi = async (mision) => {
-  const apiUrl = "http://localhost:5020/api/Misions";
+export const postFetchEquipoApi = async (equipo) => {
+  const apiUrl = "http://localhost:5020/api/Equipos";
 
   try {
-    const response = await axios.post(apiUrl, mision, {
+    const response = await axios.post(apiUrl, equipo, {
       headers: {
         Accept: "text/plain",
         // Puedes ajustar los encabezados según tus necesidades
@@ -30,16 +30,16 @@ export const postFetchMisionApi = async (mision) => {
     console.log("Respuesta exitosa:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching misiones:", error);
+    console.error("Error fetching equipos:", error);
     throw error;
   }
 };
 
-export const putFetchMisionApi = async (id, mision) => {
-  const apiUrl = "http://localhost:5020/api/Misions";
+export const putFetchEquipoApi = async (id, equipo) => {
+  const apiUrl = "http://localhost:5020/api/Equipos";
 
   try {
-    const response = await axios.put(apiUrl + "/" + id, mision, {
+    const response = await axios.put(apiUrl + "/" + id, equipo, {
       headers: {
         Accept: "text/plain",
         // Puedes ajustar los encabezados según tus necesidades
@@ -48,13 +48,13 @@ export const putFetchMisionApi = async (id, mision) => {
     console.log("Respuesta exitosa:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching misiones:", error);
+    console.error("Error fetching equipos:", error);
     throw error;
   }
 };
 
-export const deleteFetchMisionApi = async (id) => {
-  const apiUrl = "http://localhost:5020/api/Misions";
+export const deleteFetchEquipoApi = async (id) => {
+  const apiUrl = "http://localhost:5020/api/Equipos";
 
   try {
     const response = await axios.delete(apiUrl + "/" + id, {
@@ -65,26 +65,26 @@ export const deleteFetchMisionApi = async (id) => {
     });
     console.log("Respuesta exitosa:", response.data);
     return response.data;
-  } catch (error) {
-    console.error("Error fetching misiones:", error);
+ } catch (error) {
+    console.error("Error fetching equipos:", error);
     throw error;
   }
 };
 
-export const añadirOperativoApi = async (idMision, idOperativo) => {
-  const apiUrl = `http://localhost:5020/api/Misions/AddOperativo?misionId=${idMision}&operativoId=${idOperativo}`;
+export const añadirMisionApi = async (idEquipo, misionCod) => {
+  const apiUrl = `http://localhost:5020/api/Equipoes/AddMision?misionId=${misionCod}g&equipoId=${idEquipo}`;
 
   try {
-    const response = await axios.post(apiUrl ,{
+    const response = await axios.post(apiUrl, null, {
       headers: {
         'Accept': 'text/plain',
-          // Puedes ajustar los encabezados según tus necesidades
+        // Puedes ajustar los encabezados según tus necesidades
       },
     });
     console.log('Respuesta exitosa:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching operativos:', error);
+    console.error('Error añadiendo operativo al equipo:', error);
     throw error;
   }
-}
+};

@@ -60,12 +60,26 @@
                                                 <v-card-title class="text-h7 my-7 mx-2 ">{{ operativo.rol }}</v-card-title>
                                                 <v-spacer></v-spacer>
                                                 <v-btn icon="$close" variant="text"
-                                                    @click=" deleteOperativo(operativo.id, operativo)"
+                                                    @click="deleteOperativo(operativo.id, operativo)"
                                                     class="my-5 mx-6"></v-btn>
                                             </v-row>
 
 
                                             <v-card-text class="text-h6 mx-7">
+
+                
+
+                                                <v-list v-for="n in operativo.misiones" :key="n.codigo" lines="two">
+
+
+                                                    <v-list-item>
+                                                        <v-list-item-content>
+                                                            <v-list-item-title>{{ n.codigo }}</v-list-item-title>
+                                                            <v-list-item-subtitle>{{ n.estado }}</v-list-item-subtitle>
+                                                        </v-list-item-content>
+
+                                                    </v-list-item>
+                                                </v-list>
 
                                             </v-card-text>
                                         </v-card>
@@ -129,6 +143,7 @@ export default {
             operativo: {
                 nombre: "",
                 rol: "",
+                misiones: [],
             },
             items: ["planificada", "En curso", "Completada"],
             dialogVisible: false,

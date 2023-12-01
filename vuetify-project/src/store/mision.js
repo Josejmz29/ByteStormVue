@@ -3,6 +3,7 @@ import { getFetchMisionesApi } from "../api/misionapi";
 import { postFetchMisionApi } from "../api/misionapi";
 import { putFetchMisionApi } from "../api/misionapi";
 import { deleteFetchMisionApi } from "../api/misionapi";
+import { añadirOperativoApi } from "../api/misionapi";
 
 export const useMisionesStore = defineStore("misiones", {
   state: () => ({
@@ -25,5 +26,9 @@ export const useMisionesStore = defineStore("misiones", {
     async deleteMision(id) {
       return (this.misiones = await deleteFetchMisionApi(id));
     },
+    async añadirOperativo(idMision,idOperativo) {
+
+      return (this.misiones = await añadirOperativoApi(idMision,idOperativo));
+},
   },
 });
