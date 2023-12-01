@@ -50,32 +50,34 @@
                                 <v-window show-arrows>
                                     <v-window-item :key="1">
                                         <v-card height="300" class="mx-auto ">
-                                            
-                                                
-                                            
+
+
+
                                             <v-row>
                                                 <v-card-title class="text-h4 my-7 mx-7">{{ operativo.nombre
                                                 }}</v-card-title>
-                                               
+
                                                 <v-card-title class="text-h7 my-7 mx-2 ">{{ operativo.rol }}</v-card-title>
                                                 <v-spacer></v-spacer>
-                                                <v-btn icon="$close" variant="text" @click=" deleteOperativo(operativo.id, operativo)" class="my-5 mx-6"></v-btn>
+                                                <v-btn icon="$close" variant="text"
+                                                    @click=" deleteOperativo(operativo.id, operativo)"
+                                                    class="my-5 mx-6"></v-btn>
                                             </v-row>
 
 
                                             <v-card-text class="text-h6 mx-7">
-                                                {{ operativo.misionAsignada }}
+
                                             </v-card-text>
                                         </v-card>
                                     </v-window-item>
 
                                     <v-window-item :key="2">
-                                        <v-card height="280" max-width="750" class="mx-auto">
+                                        <v-card height="280" max-width="1150" class="mx-auto">
 
 
                                             <v-row class="mx-16 my-3">
 
-                                                <v-col>
+                                                <v-col class="mx-16">
                                                     <v-text-field label="Nombre" prepend-icon=""
                                                         v-model=operativo.nombre></v-text-field>
                                                     <v-text-field label="Rol" prepend-icon=""
@@ -87,7 +89,7 @@
                                             <v-row align="center" justify="center">
                                                 <v-btn class="me-2 text-none " color="#4f545c"
                                                     prepend-icon="mdi-arrow-up-bold-box-outline" variant="flat"
-                                                    @click="putOperativo(operativo.id)">
+                                                    @click="putOperativo(operativo.id, operativo)">
                                                     Modificar
                                                 </v-btn>
                                             </v-row>
@@ -157,10 +159,10 @@ export default {
             await this.operativosStore.deleteOperativo(id);
             await this.getOperativos();
         },
-        async putOperativo(id,operativoPut) {
-            
-           
-            await this.operativosStore.putOperativo(id,operativoPut);
+        async putOperativo(id, operativoPut) {
+
+
+            await this.operativosStore.putOperativo(id, operativoPut);
             this.operativo.nombre = "";
             this.operativo.rol = "";
             await this.getOperativos();
