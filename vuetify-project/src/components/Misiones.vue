@@ -1,4 +1,25 @@
 <template>
+    <v-row class="my-1">
+        <v-col cols="1">
+
+        </v-col>
+        <v-col cols="5">
+            <v-row>
+                <v-col cols="6">
+                    <v-text-field v-model="name" hide-details placeholder="Search name..." class="ma-2"
+                        density="compact"></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                    <v-select :items="items" density="comfortable" label="Comfortable"
+                        v-model="misionPost.estado"></v-select>
+                </v-col>
+            </v-row>
+        </v-col>
+        <v-col cols="6">
+
+        </v-col>
+
+    </v-row>
     <v-card class="mx-auto" max-width="1150">
         <v-list lines="two">
             <v-list-subheader>
@@ -21,7 +42,8 @@
 
                                 <v-col cols="12" sm="6">
                                     <v-text-field label="Código" prepend-icon="" v-model="misionPost.codigo"></v-text-field>
-                                    <v-select :items="items" density="comfortable" label="Comfortable" v-model="misionPost.estado" ></v-select>
+                                    <v-select :items="items" density="comfortable" label="Comfortable"
+                                        v-model="misionPost.estado"></v-select>
 
                                 </v-col>
 
@@ -52,7 +74,7 @@
                             <v-card class="mx-auto" max-width="1150">
                                 <v-window show-arrows>
                                     <v-window-item :key="1">
-                                        <v-card height="300" class="mx-auto ">
+                                        <v-card height="auto" class="mx-auto ">
 
 
                                             <v-row>
@@ -81,15 +103,40 @@
                                                         </tr>
                                                         <tr>
                                                             <td>Operativo</td>
-                                                            <td>{{ 
-                                                            mision.operativoAsignado ? mision.operativoAsignado.nombre : ''
-                                                        }}</td>
+                                                            <td>{{
+                                                                mision.operativoAsignado ? mision.operativoAsignado.nombre :
+                                                                ''
+                                                            }}</td>
                                                         </tr>
 
                                                         <tr>
                                                             <td>Descripcion</td>
                                                             <td>
                                                                 <p class="text-left ">{{ mision.descripcion }}</p>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td>Equipos</td>
+                                                            <td>
+                                                                <v-list v-for="n in mision.equipos" :key="n.id" lines="two">
+
+
+                                                                    <v-list-item>
+                                                                        <v-list-item-content>
+                                                                            <v-list-item-title>{{ n.tipo
+                                                                            }}</v-list-item-title>
+                                                                            <v-list-item-subtitle>{{ n.estado
+                                                                            }}</v-list-item-subtitle>
+
+                                                                            {{ n.descripcion }}
+
+                                                                        </v-list-item-content>
+
+
+
+                                                                    </v-list-item>
+                                                                </v-list>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -140,7 +187,8 @@
 
                                                 <v-col class="text-end align-center">
                                                     <v-label class="mx-4 my-3 text-h6 ">Operativo:</v-label></v-col>
-                                                <v-col><v-text-field label="id" prepend-icon="" v-model="operativoId"></v-text-field></v-col>
+                                                <v-col><v-text-field label="id" prepend-icon=""
+                                                        v-model="operativoId"></v-text-field></v-col>
 
                                                 <v-spacer></v-spacer>
 
@@ -174,6 +222,8 @@
 
 <script>
 import { useMisionesStore } from "../store/mision";
+import { useAuthStore } from "../store/authStore";
+import * as signalR from "@microsoft/signalr";
 
 export default {
     data() {
@@ -189,9 +239,9 @@ export default {
                     nombre: "",
                     rol: "",
                 },
-                esquipos: [],  
+                equipos: [],
             },
-            misionPost : {
+            misionPost: {
                 codigo: "",
                 descripcion: "",
                 estado: "",
@@ -199,18 +249,36 @@ export default {
             items: ["planificada", "En curso", "Completada"],
             dialogVisible: false,
             misionesStore: null,
-            operativoId : "",
+            operativoId: "",
+            authStore: null,
+            name: "",
+            search: "",
+            select: null,
+
         };
     },
 
     mounted() {
         this.misionesStore = useMisionesStore();
         this.getMisiones();
+        this.authStore = useAuthStore();
+
+        if (!this.authStore.isTokenValid()) {
+            this.$router.push({ name: "Login" });
+        }
+
     },
+    watch: {
+    name: 'filtrar', // Llama automáticamente a filtrar() cuando name cambia
+    'misionPost.estado': 'filtrar', // Llama automáticamente a filtrar() cuando misionPost.estado cambia
+  },
 
     methods: {
         async getMisiones() {
             this.misiones = await this.misionesStore.getMisiones();
+
+            this.filtrar();
+
         },
         async guardarMision() {
             await this.misionesStore.postMision(this.misionPost);
@@ -219,6 +287,10 @@ export default {
             this.misionPost.estado = null;
             await this.getMisiones();
             this.dialogVisible = false; // Cierra el diálogo después de guardar
+
+
+
+
         },
         async deleteMision(id) {
             await this.misionesStore.deleteMision(id);
@@ -226,12 +298,12 @@ export default {
         },
         async putMision(id, misionPut) {
             await this.misionesStore.putMision(id, misionPut);
-            
+
             await this.getMisiones();
         },
         async añadirOperativo(id, operativo) {
             await this.misionesStore.añadirOperativo(id, operativo);
-            this.operativoId ="";
+            this.operativoId = "";
             await this.getMisiones();
         },
         abrirDialog() {
@@ -240,6 +312,29 @@ export default {
         cerrarDialog() {
             this.dialogVisible = false;
         },
+        filtrar() {
+            // Obtener una copia de todas las misiones
+            let misionesFiltradas = [...this.misiones];
+
+            // Aplicar filtro por nombre
+            if (this.name !== "") {
+                const filtroNombre = this.name.toLowerCase();
+                misionesFiltradas = misionesFiltradas.filter((mision) =>
+                    mision.codigo.toLowerCase().includes(filtroNombre)
+                );
+            }
+
+            // Aplicar filtro por estado
+            if (this.misionPost.estado !== "") {
+                misionesFiltradas = misionesFiltradas.filter(
+                    (mision) => mision.estado === this.misionPost.estado
+                );
+            }
+
+            // Asignar las misiones filtradas a la propiedad misiones
+            this.misiones = misionesFiltradas;
+            console.log(this);
+        }
     },
 };
 </script>

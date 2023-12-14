@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getFetchEquiposApi = async () => {
-  const apiUrl = "http://localhost:5020/api/Equipos";
+  const apiUrl = "http://localhost:5020/api/Equipoes";
 
   try {
     const response = await axios.get(apiUrl, {
@@ -18,7 +18,7 @@ export const getFetchEquiposApi = async () => {
 };
 
 export const postFetchEquipoApi = async (equipo) => {
-  const apiUrl = "http://localhost:5020/api/Equipos";
+  const apiUrl = "http://localhost:5020/api/Equipoes";
 
   try {
     const response = await axios.post(apiUrl, equipo, {
@@ -36,7 +36,7 @@ export const postFetchEquipoApi = async (equipo) => {
 };
 
 export const putFetchEquipoApi = async (id, equipo) => {
-  const apiUrl = "http://localhost:5020/api/Equipos";
+  const apiUrl = "http://localhost:5020/api/Equipoes";
 
   try {
     const response = await axios.put(apiUrl + "/" + id, equipo, {
@@ -54,7 +54,7 @@ export const putFetchEquipoApi = async (id, equipo) => {
 };
 
 export const deleteFetchEquipoApi = async (id) => {
-  const apiUrl = "http://localhost:5020/api/Equipos";
+  const apiUrl = "http://localhost:5020/api/Equipoes";
 
   try {
     const response = await axios.delete(apiUrl + "/" + id, {
@@ -72,7 +72,7 @@ export const deleteFetchEquipoApi = async (id) => {
 };
 
 export const añadirMisionApi = async (idEquipo, misionCod) => {
-  const apiUrl = `http://localhost:5020/api/Equipoes/AddMision?misionId=${misionCod}g&equipoId=${idEquipo}`;
+  const apiUrl = `http://localhost:5020/api/Equipoes/AddMision?misionId=${misionCod}&equipoId=${idEquipo}`;
 
   try {
     const response = await axios.post(apiUrl, null, {

@@ -1,11 +1,21 @@
 
 <template>
+
     <v-card class="mx-auto" max-width="1150">
         <v-list lines="two">
+
+        <v-list-subheader v-if="showAlert">
+                <v-alert type="info" title="Alert title" text="Hay una nueva mision disponible" variant="tonal" width="1150"
+                    @close="showAlert = false" class="my-4 "></v-alert>
+            </v-list-subheader>
+
+
             <v-list-subheader>
                 <v-col cols="auto">
                     <v-btn @click="abrirDialog" icon="mdi-plus" size="small"></v-btn>
                 </v-col>
+
+
             </v-list-subheader>
 
             <v-dialog v-model="dialogVisible" max-width="600">
@@ -49,7 +59,7 @@
                             <v-card class="mx-auto" max-width="1150">
                                 <v-window show-arrows>
                                     <v-window-item :key="1">
-                                        <v-card height="300" class="mx-auto ">
+                                        <v-card height="auto" class="mx-auto ">
 
 
 
@@ -67,7 +77,7 @@
 
                                             <v-card-text class="text-h6 mx-7">
 
-                
+
 
                                                 <v-list v-for="n in operativo.misiones" :key="n.codigo" lines="two">
 
@@ -131,6 +141,10 @@
 
 
 import { useOperativosStore } from "../store/operativos";
+import { useAuthStore } from "@/store/authStore";
+import { useSignalStore } from "@/store/signalStore";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import * as signalR from "@microsoft/signalr";
 
 
 
@@ -148,18 +162,36 @@ export default {
             items: ["planificada", "En curso", "Completada"],
             dialogVisible: false,
             operativosStore: null,
+            authStore: null,
+            connection: null,
+            showAlert: false,
         };
     },
 
     mounted() {
         this.operativosStore = useOperativosStore();
         this.getOperativos();
+        this.authStore = useAuthStore();
+
+        if (!this.authStore.isTokenValid()) {
+            this.$router.push({ name: "Login" });
+        }
+
+        this.initSignalR();
+        
     },
 
     methods: {
         async getOperativos() {
 
+            let that = this;
             this.operativos = await this.operativosStore.getOperativos();
+            this.connection.on("ReceiveNotification", function () {
+                that.showAlert = true;
+                console.log("Recibido");
+            });
+
+
         },
         async guardarOperativo() {
 
@@ -188,6 +220,21 @@ export default {
         },
         cerrarDialog() {
             this.dialogVisible = false;
+        },
+        initSignalR() {
+            const connection = new HubConnectionBuilder()
+                .withUrl("http://localhost:5020/api/message")
+                .build();
+
+            connection.start().then(function () {
+                console.log("Connected!");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            this.connection = connection;
+
+
         },
     },
 

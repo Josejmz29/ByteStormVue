@@ -7,6 +7,7 @@ import { deleteFetchOperativoApi } from '../api/operativoapi';
 export const useOperativosStore = defineStore('operativos', {
     state: () => ({
         operativos: [],
+        alert : false,
 
     }),
 
@@ -31,6 +32,15 @@ export const useOperativosStore = defineStore('operativos', {
 
             return this.operativos = await deleteFetchOperativoApi(id);
         },
+
+        setShowAlert(coondition){
+            this.alert = coondition;
+
+        },
+
+        getAlert(){
+            return this.alert;
+        }
     },
 
 });
