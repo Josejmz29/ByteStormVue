@@ -10,8 +10,7 @@
                         density="compact"></v-text-field>
                 </v-col>
                 <v-col cols="6">
-                    <v-select :items="items" density="comfortable" label="Comfortable"
-                        v-model="misionPost.estado"></v-select>
+                    <v-select :items="items2" density="comfortable" label="Comfortable" v-model="state"></v-select>
                 </v-col>
             </v-row>
         </v-col>
@@ -247,6 +246,7 @@ export default {
                 estado: "",
             },
             items: ["planificada", "En curso", "Completada"],
+            items2: ["planificada", "En curso", "Completada", "Ninguno"],
             dialogVisible: false,
             misionesStore: null,
             operativoId: "",
@@ -254,6 +254,7 @@ export default {
             name: "",
             search: "",
             select: null,
+            state: "",
 
         };
     },
@@ -269,9 +270,9 @@ export default {
 
     },
     watch: {
-    name: 'filtrar', // Llama automáticamente a filtrar() cuando name cambia
-    'misionPost.estado': 'filtrar', // Llama automáticamente a filtrar() cuando misionPost.estado cambia
-  },
+        name: 'filtrar', // Llama automáticamente a filtrar() cuando name cambia
+        'state': 'filtrar', // Llama automáticamente a filtrar() cuando misionPost.estado cambia
+    },
 
     methods: {
         async getMisiones() {
@@ -314,7 +315,7 @@ export default {
         },
         filtrar() {
             // Obtener una copia de todas las misiones
-            let misionesFiltradas = [...this.misiones];
+            let misionesFiltradas = [...useMisionesStore().misiones];
 
             // Aplicar filtro por nombre
             if (this.name !== "") {
@@ -325,15 +326,15 @@ export default {
             }
 
             // Aplicar filtro por estado
-            if (this.misionPost.estado !== "") {
+            if (this.state !== "" && this.state !== "Ninguno") {
                 misionesFiltradas = misionesFiltradas.filter(
-                    (mision) => mision.estado === this.misionPost.estado
+                    (mision) => mision.estado === this.state
                 );
             }
 
             // Asignar las misiones filtradas a la propiedad misiones
             this.misiones = misionesFiltradas;
-            console.log(this);
+
         }
     },
 };
